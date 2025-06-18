@@ -1,9 +1,17 @@
-// URL do seu modelo Teachable Machine
-const URL = "https://teachablemachine.withgoogle.com/models/Lx84jfhmy/";
+const MODEL_URL = "https://teachablemachine.withgoogle.com/models/Lx84jfhmy/";
+
+let recognizer = null;
+let labelContainer = null;
+let isListening = false;
+
+document.addEventListener("DOMContentLoaded", () => {
+    const toggleButton = document.getElementById("toggle-button");
+    toggleButton.addEventListener("click", toggleRecognition);
+});
 
 async function createModel() {
-    const checkpointURL = URL + "model.json";
-    const metadataURL = URL + "metadata.json";
+    const checkpointURL = MODEL_URL + "model.json";
+    const metadataURL = MODEL_URL + "metadata.json";
 
     const recognizer = speechCommands.create(
         "BROWSER_FFT",
@@ -16,36 +24,58 @@ async function createModel() {
     return recognizer;
 }
 
-async function init() {
+async function toggleRecognition() {
+    const toggleButton = document.getElementById("toggle-button");
+
+    if (!isListening) {
+        if (!await hasMicrophonePermission()) return;
+
+        if (!recognizer) {
+            recognizer = await createModel();
+        }
+
+        const classLabels = recognizer.wordLabels();
+        labelContainer = document.getElementById("label-container");
+
+        setupLabelDisplay(classLabels);
+
+        recognizer.listen(result => {
+            const scores = result.scores;
+            scores.forEach((score, i) => {
+                labelContainer.childNodes[i].innerHTML = `${classLabels[i]}: ${score.toFixed(2)}`;
+            });
+        }, {
+            includeSpectrogram: false,
+            probabilityThreshold: 0.75,
+            invokeCallbackOnNoiseAndUnknown: true,
+            overlapFactor: 0.5
+        });
+
+        isListening = true;
+        toggleButton.textContent = "Parar";
+    } else {
+        await recognizer.stopListening();
+        isListening = false;
+        toggleButton.textContent = "Iniciar";
+        labelContainer.innerHTML = "";
+        console.log("Reconhecimento parado.");
+    }
+
+}
+
+async function hasMicrophonePermission() {
     try {
         await navigator.mediaDevices.getUserMedia({ audio: true });
-    } catch (e) {
-        alert("Permissão de microfone negada ou não disponível.");
-        return;
+        return true;
+    } catch (error) {
+        alert("Permissão de microfone negada ou dispositivo não disponível.");
+        return false;
     }
+}
 
-    const recognizer = await createModel();
-    const classLabels = recognizer.wordLabels();
-    const labelContainer = document.getElementById("label-container");
-
+function setupLabelDisplay(labels) {
     labelContainer.innerHTML = "";
-    for (let i = 0; i < classLabels.length; i++) {
+    labels.forEach(() => {
         labelContainer.appendChild(document.createElement("div"));
-    }
-
-    recognizer.listen(result => {
-        const scores = result.scores;
-        for (let i = 0; i < classLabels.length; i++) {
-            const classPrediction = `${classLabels[i]}: ${scores[i].toFixed(2)}`;
-            labelContainer.childNodes[i].innerHTML = classPrediction;
-        }
-    }, {
-        includeSpectrogram: true,
-        probabilityThreshold: 0.75,
-        invokeCallbackOnNoiseAndUnknown: true,
-        overlapFactor: 0.50
     });
-
-    // Parar automaticamente após 5 segundos (pode comentar se não quiser)
-    // setTimeout(() => recognizer.stopListening(), 5000);
 }

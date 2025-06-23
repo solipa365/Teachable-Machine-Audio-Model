@@ -1,25 +1,73 @@
 body {
-    font-family: Arial, sans-serif;
-    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #fcfcfc;
+    color: #333333;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 2rem;
 }
 
-#label-container div {
-    font-size: 18px;
-    margin-top: 4px;
+h1 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: #2c3e50;
 }
 
 button {
-    padding: 10px 20px;
-    font-size: 16px;
-    margin-top: 10px;
-    cursor: pointer;
-    border: none;
     background-color: #007bff;
-    color: white;
-    border-radius: 6px;
-    transition: background-color 0.3s;
+    color: #ffffff;
+    border: none;
+    padding: 12px 24px;
+    font-size: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin: 1rem;
 }
 
 button:hover {
     background-color: #0056b3;
+}
+
+/* #voice-box {
+    width: 224px;
+    height: 224px;
+    margin-top: 1.5rem;
+    border: 1px solid #ccc;
+    background-color: #eaeaea;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#voice-box::before {
+    width: 2px;
+    height: 100%;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+}
+
+#voice-box::after {
+    height: 2px;
+    width: 100%;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+} */
+
+#voice-box {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#voice-canvas {
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
 }

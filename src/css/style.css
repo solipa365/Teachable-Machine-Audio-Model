@@ -1,26 +1,28 @@
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #fcfcfc;
-    color: #333333;
+    color: #333;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: 2rem;
+    padding: 2rem;
+    box-sizing: border-box;
 }
 
 h1 {
     font-size: 1.5rem;
     margin-bottom: 1rem;
     color: #2c3e50;
+    text-align: center;
 }
 
 button {
     background-color: #007bff;
-    color: #ffffff;
+    color: #fff;
     border: none;
-    padding: 12px 24px;
-    font-size: 1rem;
+    padding: 10px 20px;
+    font-size: 0.9rem;
     border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.3s ease;
@@ -31,15 +33,61 @@ button:hover {
     background-color: #0056b3;
 }
 
+#threshold {
+    width: 250px;
+    margin-bottom: 1rem;
+}
+
+label[for="threshold"] {
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+    display: block;
+    color: #555;
+}
+
+#recognized-command {
+    margin: 1rem 0;
+    font-size: 1rem;
+    color: #333;
+}
+
+#label-container div {
+    margin: 0.25rem 0;
+    font-size: 0.9rem;
+    color: #444;
+}
+
 #voice-box {
     margin-top: 2rem;
     display: flex;
     justify-content: center;
     align-items: center;
+    width: 100%;
+    max-width: 600px;
 }
 
 #voice-canvas {
+    width: 100%;
+    height: 100px;
     background-color: #f0f0f0;
     border: 1px solid #ccc;
     border-radius: 8px;
+}
+
+@media (max-width: 600px) {
+    h1 {
+        font-size: 1.2rem;
+    }
+
+    button {
+        width: 100%;
+    }
+
+    #threshold {
+        width: 100%;
+    }
+
+    #voice-box {
+        padding: 0 1rem;
+    }
 }

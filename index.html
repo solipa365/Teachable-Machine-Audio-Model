@@ -2,33 +2,33 @@
 <html lang="pt">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="keywords" content="">
-    <meta name="description" content="">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teachable Machine Audio</title>
 
-    <title>Teachable Machine Audio</title>
+  <link rel="stylesheet" href="/src/css/style.css" />
 
-    <link href="/src/img/favicon.png" rel="icon">
-    <link href="/src/img/apple-touch-icon.png" rel="apple-touch-icon">
-
-    <link rel="stylesheet" href="/src/css/style.css">
-
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/speech-commands@0.5.4/dist/speech-commands.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/speech-commands@0.5.4/dist/speech-commands.min.js"></script>
 </head>
 
 <body>
+  <h1>Teachable Machine Audio Model</h1>
 
-    <h1>Teachable Machine Audio Model</h1>
+  <button id="toggle-button" type="button">Iniciar</button>
 
-    <button id="toggle-button" type="button">Iniciar</button>
+  <label for="threshold">Sensibilidade: <span id="threshold-value">0.75</span></label>
+  <input type="range" id="threshold" min="0.01" max="1" step="0.01" value="0.75" />
 
-    <div id="voice-box">
-        <canvas id="voice-canvas" width="400" height="100"></canvas>
-    </div>
+  <p id="recognized-command">Comando reconhecido: <strong>Nenhum</strong></p>
 
-    <script src="/src/js/script.js"></script>
+  <div id="label-container"></div>
+
+  <div id="voice-box">
+    <canvas id="voice-canvas" width="400%" height="100"></canvas>
+  </div>
+
+  <script src="/src/js/script.js"></script>
 </body>
+
 </html>

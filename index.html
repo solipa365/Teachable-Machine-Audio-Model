@@ -2,10 +2,18 @@
 <html lang="pt">
 
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8">
+  <meta name="keywords" content="">
+  <meta name="description" content="">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
   <title>Teachable Machine Audio</title>
 
+  <!-- Favicons -->
+  <link href="/src/img/favicon.png" rel="icon">
+  <link href="/src/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Main CSS File -->
   <link rel="stylesheet" href="/src/css/style.css" />
 
   <!-- TensorFlow e Speech Commands -->
@@ -20,8 +28,8 @@
   <button id="toggle-button" type="button">Iniciar</button>
 
   <!-- Controle de sensibilidade -->
-  <label for="threshold">Sensibilidade: <span id="threshold-value">0.75</span></label>
-  <input type="range" id="threshold" min="0.01" max="1" step="0.01" value="0.75" />
+  <label for="threshold">Sensibilidade: <span id="threshold-value">0.70</span></label>
+  <input type="range" id="threshold" min="0.01" max="1" step="0.01" value="0.70" />
 
   <!-- Exibição do comando reconhecido -->
   <p id="recognized-command">Comando reconhecido: <strong>Nenhum</strong></p>

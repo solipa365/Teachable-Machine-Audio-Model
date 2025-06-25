@@ -1,6 +1,5 @@
 const MODEL_URL = "https://teachablemachine.withgoogle.com/models/Lx84jfhmy/";
 
-
 let recognizer = null;
 let labelContainer = null;
 let isListening = false;
@@ -85,9 +84,12 @@ async function toggleRecognition() {
             }: ${score.toFixed(2)}`;
           });
 
-          if (confidence >= 0.8 && writer) {
+          if (confidence >= 0.5 && writer) {
             await writer.write(new TextEncoder().encode(predictedLabel + "\n"));
             console.log("Enviado ao Arduino:", predictedLabel);
+          } else {
+            if (!writer) console.warn("Writer não está disponível.");
+            else console.log(`Confiança muito baixa: ${confidence.toFixed(2)}`);
           }
         },
         {
@@ -119,7 +121,6 @@ async function toggleRecognition() {
       "Comando reconhecido: <strong>Nenhum</strong>";
   }
 }
-
 
 function setupLabelDisplay(labels) {
   labelContainer.innerHTML = "";
@@ -188,6 +189,8 @@ async function connectToArduino() {
     await port.open({ baudRate: 9600 });
     writer = port.writable.getWriter();
 
+    console.log("Porta serial aberta:", port);
+
     const decoder = new TextDecoderStream();
     port.readable.pipeTo(decoder.writable);
     const reader = decoder.readable.getReader();
@@ -209,5 +212,19 @@ async function listenToArduino(reader) {
     if (value) {
       console.log("Arduino disse:", value);
     }
+  }
+}
+
+// NOVA FUNÇÃO para enviar comandos MANUALMENTE (testes)
+async function enviarComando(cmd) {
+  if (writer) {
+    try {
+      await writer.write(new TextEncoder().encode(cmd + "\n"));
+      console.log("Enviado ao Arduino (manual):", cmd);
+    } catch (err) {
+      console.error("Erro ao enviar comando ao Arduino:", err);
+    }
+  } else {
+    alert("Arduino não está conectado. Por favor, conecte primeiro.");
   }
 }

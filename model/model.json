@@ -2,7 +2,7 @@
   "modelTopology": {
     "class_name": "Model",
     "config": {
-      "name": "model1",
+      "name": "model5",
       "layers": [
         {
           "name": "conv2d_1_input",
@@ -50,11 +50,7 @@
             "batch_input_shape": [null, 43, 232, 1],
             "dtype": "float32"
           },
-          "inbound_nodes": [
-            [
-              ["conv2d_1_input", 0, 0, {}]
-            ]
-          ]
+          "inbound_nodes": [[["conv2d_1_input", 0, 0, {}]]]
         },
         {
           "name": "max_pooling2d_1",
@@ -67,11 +63,7 @@
             "name": "max_pooling2d_1",
             "trainable": false
           },
-          "inbound_nodes": [
-            [
-              ["conv2d_1", 0, 0, {}]
-            ]
-          ]
+          "inbound_nodes": [[["conv2d_1", 0, 0, {}]]]
         },
         {
           "name": "conv2d_2",
@@ -106,11 +98,7 @@
             "name": "conv2d_2",
             "trainable": false
           },
-          "inbound_nodes": [
-            [
-              ["max_pooling2d_1", 0, 0, {}]
-            ]
-          ]
+          "inbound_nodes": [[["max_pooling2d_1", 0, 0, {}]]]
         },
         {
           "name": "max_pooling2d_2",
@@ -123,11 +111,7 @@
             "name": "max_pooling2d_2",
             "trainable": false
           },
-          "inbound_nodes": [
-            [
-              ["conv2d_2", 0, 0, {}]
-            ]
-          ]
+          "inbound_nodes": [[["conv2d_2", 0, 0, {}]]]
         },
         {
           "name": "conv2d_3",
@@ -162,11 +146,7 @@
             "name": "conv2d_3",
             "trainable": false
           },
-          "inbound_nodes": [
-            [
-              ["max_pooling2d_2", 0, 0, {}]
-            ]
-          ]
+          "inbound_nodes": [[["max_pooling2d_2", 0, 0, {}]]]
         },
         {
           "name": "max_pooling2d_3",
@@ -179,11 +159,7 @@
             "name": "max_pooling2d_3",
             "trainable": false
           },
-          "inbound_nodes": [
-            [
-              ["conv2d_3", 0, 0, {}]
-            ]
-          ]
+          "inbound_nodes": [[["conv2d_3", 0, 0, {}]]]
         },
         {
           "name": "conv2d_4",
@@ -218,11 +194,7 @@
             "name": "conv2d_4",
             "trainable": false
           },
-          "inbound_nodes": [
-            [
-              ["max_pooling2d_3", 0, 0, {}]
-            ]
-          ]
+          "inbound_nodes": [[["max_pooling2d_3", 0, 0, {}]]]
         },
         {
           "name": "max_pooling2d_4",
@@ -235,11 +207,7 @@
             "name": "max_pooling2d_4",
             "trainable": false
           },
-          "inbound_nodes": [
-            [
-              ["conv2d_4", 0, 0, {}]
-            ]
-          ]
+          "inbound_nodes": [[["conv2d_4", 0, 0, {}]]]
         },
         {
           "name": "flatten_1",
@@ -249,11 +217,7 @@
             "name": "flatten_1",
             "trainable": false
           },
-          "inbound_nodes": [
-            [
-              ["max_pooling2d_4", 0, 0, {}]
-            ]
-          ]
+          "inbound_nodes": [[["max_pooling2d_4", 0, 0, {}]]]
         },
         {
           "name": "dropout_1",
@@ -265,11 +229,7 @@
             "name": "dropout_1",
             "trainable": false
           },
-          "inbound_nodes": [
-            [
-              ["flatten_1", 0, 0, {}]
-            ]
-          ]
+          "inbound_nodes": [[["flatten_1", 0, 0, {}]]]
         },
         {
           "name": "dense_1",
@@ -299,17 +259,13 @@
             "name": "dense_1",
             "trainable": false
           },
-          "inbound_nodes": [
-            [
-              ["dropout_1", 0, 0, {}]
-            ]
-          ]
+          "inbound_nodes": [[["dropout_1", 0, 0, {}]]]
         },
         {
-          "name": "sequential_3",
+          "name": "sequential_11",
           "class_name": "Sequential",
           "config": {
-            "name": "sequential_3",
+            "name": "sequential_11",
             "layers": [
               {
                 "class_name": "Dense",
@@ -343,19 +299,11 @@
               }
             ]
           },
-          "inbound_nodes": [
-            [
-              ["dense_1", 0, 0, {}]
-            ]
-          ]
+          "inbound_nodes": [[["dense_1", 0, 0, {}]]]
         }
       ],
-      "input_layers": [
-        ["conv2d_1_input", 0, 0]
-      ],
-      "output_layers": [
-        ["sequential_3", 1, 0]
-      ]
+      "input_layers": [["conv2d_1_input", 0, 0]],
+      "output_layers": [["sequential_11", 1, 0]]
     },
     "keras_version": "tfjs-layers 1.7.4",
     "backend": "tensor_flow.js"
@@ -364,15 +312,35 @@
     {
       "paths": ["weights.bin"],
       "weights": [
-        { "name": "NewHeadDense/kernel", "shape": [2000, 4], "dtype": "float32" },
+        {
+          "name": "NewHeadDense/kernel",
+          "shape": [2000, 4],
+          "dtype": "float32"
+        },
         { "name": "NewHeadDense/bias", "shape": [4], "dtype": "float32" },
-        { "name": "conv2d_1/kernel", "shape": [2, 8, 1, 8], "dtype": "float32" },
+        {
+          "name": "conv2d_1/kernel",
+          "shape": [2, 8, 1, 8],
+          "dtype": "float32"
+        },
         { "name": "conv2d_1/bias", "shape": [8], "dtype": "float32" },
-        { "name": "conv2d_2/kernel", "shape": [2, 4, 8, 32], "dtype": "float32" },
+        {
+          "name": "conv2d_2/kernel",
+          "shape": [2, 4, 8, 32],
+          "dtype": "float32"
+        },
         { "name": "conv2d_2/bias", "shape": [32], "dtype": "float32" },
-        { "name": "conv2d_3/kernel", "shape": [2, 4, 32, 32], "dtype": "float32" },
+        {
+          "name": "conv2d_3/kernel",
+          "shape": [2, 4, 32, 32],
+          "dtype": "float32"
+        },
         { "name": "conv2d_3/bias", "shape": [32], "dtype": "float32" },
-        { "name": "conv2d_4/kernel", "shape": [2, 4, 32, 32], "dtype": "float32" },
+        {
+          "name": "conv2d_4/kernel",
+          "shape": [2, 4, 32, 32],
+          "dtype": "float32"
+        },
         { "name": "conv2d_4/bias", "shape": [32], "dtype": "float32" },
         { "name": "dense_1/kernel", "shape": [704, 2000], "dtype": "float32" },
         { "name": "dense_1/bias", "shape": [2000], "dtype": "float32" }

@@ -2,16 +2,16 @@
 <html lang="pt">
 
 <head>
-  <meta charset="utf-8">
-  <meta name="keywords" content="">
-  <meta name="description" content="">
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta charset="utf-8" />
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
 
   <title>Teachable Machine Audio</title>
 
   <!-- Favicons -->
-  <link href="/src/img/favicon.png" rel="icon">
-  <link href="/src/img/apple-touch-icon.png" rel="apple-touch-icon">
+  <link href="/src/img/favicon.png" rel="icon" />
+  <link href="/src/img/apple-touch-icon.png" rel="apple-touch-icon" />
 
   <!-- Main CSS File -->
   <link rel="stylesheet" href="/src/css/style.css" />
@@ -44,6 +44,13 @@
 
   <!-- Botão de conexão com Arduino -->
   <button id="connect-arduino" type="button">Conectar ao Arduino</button>
+
+  <!-- Botões para testar comandos manualmente -->
+  <div style="margin-top: 15px;">
+    <button type="button" onclick="enviarComando('open')">Testar OPEN</button>
+    <button type="button" onclick="enviarComando('close')">Testar CLOSE</button>
+    <button type="button" onclick="enviarComando('cool')">Testar COOL</button>
+  </div>
 
   <!-- Script principal -->
   <script src="/src/js/script.js"></script>

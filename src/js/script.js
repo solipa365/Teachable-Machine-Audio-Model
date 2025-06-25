@@ -1,4 +1,5 @@
 const MODEL_URL = "https://teachablemachine.withgoogle.com/models/Lx84jfhmy/";
+const USE_CUSTOM_MODEL = true;
 
 let recognizer = null;
 let labelContainer = null;
@@ -9,6 +10,8 @@ let audioContext;
 let analyser;
 let dataArray;
 let drawAnimationId;
+
+let port, writer;
 
 const toggleButton = document.getElementById("toggle-button");
 const thresholdSlider = document.getElementById("threshold");
@@ -24,19 +27,21 @@ document.addEventListener("DOMContentLoaded", () => {
   toggleButton.addEventListener("click", toggleRecognition);
 });
 
+// TeachableMachine ou local
 async function createModel() {
-  const checkpointURL = MODEL_URL + "model.json";
-  const metadataURL = MODEL_URL + "metadata.json";
+  const base = USE_CUSTOM_MODEL ? CUSTOM_MODEL_URL : MODEL_URL;
+  const checkpointURL = base + "model.json";
+  const metadataURL = base + "metadata.json";
 
-  const recognizer = speechCommands.create(
+  const model = speechCommands.create(
     "BROWSER_FFT",
     undefined,
     checkpointURL,
     metadataURL
   );
 
-  await recognizer.ensureModelLoaded();
-  return recognizer;
+  await model.ensureModelLoaded();
+  return model;
 }
 
 async function toggleRecognition() {
@@ -48,28 +53,33 @@ async function toggleRecognition() {
       const classLabels = recognizer.wordLabels();
       setupLabelDisplay(classLabels);
 
-      recognizer.listen(
-        (result) => {
-          const scores = result.scores;
-          let maxIndex = 0;
-          for (let i = 1; i < scores.length; i++) {
-            if (scores[i] > scores[maxIndex]) maxIndex = i;
-          }
-          recognizedDisplay.innerHTML = `Comando reconhecido: <strong>${classLabels[maxIndex]}</strong>`;
-
-          scores.forEach((score, i) => {
-            labelContainer.childNodes[i].innerHTML = `${
-              classLabels[i]
-            }: ${score.toFixed(2)}`;
-          });
-        },
-        {
-          includeSpectrogram: false,
-          probabilityThreshold: parseFloat(thresholdSlider.value),
-          invokeCallbackOnNoiseAndUnknown: true,
-          overlapFactor: 0.5,
+      recognizer.listen(async (result) => {
+        const scores = result.scores;
+        let maxIndex = 0;
+        for (let i = 1; i < scores.length; i++) {
+          if (scores[i] > scores[maxIndex]) maxIndex = i;
         }
-      );
+
+        const predictedLabel = classLabels[maxIndex];
+        const confidence = scores[maxIndex];
+
+        recognizedDisplay.innerHTML = `Comando reconhecido: <strong>${predictedLabel}</strong>`;
+
+        scores.forEach((score, i) => {
+          labelContainer.childNodes[i].innerHTML = `${classLabels[i]}: ${score.toFixed(2)}`;
+        });
+
+        if (confidence >= 0.8 && writer) {
+          await writer.write(new TextEncoder().encode(predictedLabel + "\n"));
+          console.log("Enviado ao Arduino:", predictedLabel);
+        }
+
+      }, {
+        includeSpectrogram: true,
+        probabilityThreshold: parseFloat(thresholdSlider.value),
+        invokeCallbackOnNoiseAndUnknown: true,
+        overlapFactor: 0.5,
+      });
 
       startAudioVisualizer(sharedStream);
 
@@ -88,8 +98,7 @@ async function toggleRecognition() {
     isListening = false;
     toggleButton.textContent = "Iniciar";
     labelContainer.innerHTML = "";
-    recognizedDisplay.innerHTML =
-      "Comando reconhecido: <strong>Nenhum</strong>";
+    recognizedDisplay.innerHTML = "Comando reconhecido: <strong>Nenhum</strong>";
   }
 }
 
@@ -115,7 +124,6 @@ function startAudioVisualizer(stream) {
 
   function draw() {
     drawAnimationId = requestAnimationFrame(draw);
-
     analyser.getByteTimeDomainData(dataArray);
 
     ctx.fillStyle = "#f0f0f0";
@@ -131,13 +139,8 @@ function startAudioVisualizer(stream) {
     for (let i = 0; i < dataArray.length; i++) {
       const v = dataArray[i] / 128.0;
       const y = (v * canvas.height) / 2;
-
-      if (i === 0) {
-        ctx.moveTo(x, y);
-      } else {
-        ctx.lineTo(x, y);
-      }
-
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
       x += sliceWidth;
     }
 
@@ -158,4 +161,34 @@ function stopAudioVisualizer() {
   const canvas = document.getElementById("voice-canvas");
   const ctx = canvas.getContext("2d");
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+async function connectToArduino() {
+  try {
+    port = await navigator.serial.requestPort();
+    await port.open({ baudRate: 9600 });
+    writer = port.writable.getWriter();
+
+    const decoder = new TextDecoderStream();
+    port.readable.pipeTo(decoder.writable);
+    const reader = decoder.readable.getReader();
+
+    listenToArduino(reader);
+    alert("Conectado ao Arduino!");
+  } catch (err) {
+    alert("Erro ao ligar ao Arduino: " + err);
+  }
+}
+
+async function listenToArduino(reader) {
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) {
+      console.log("[Serial] stream encerrado.");
+      break;
+    }
+    if (value) {
+      console.log("Arduino disse:", value);
+    }
+  }
 }

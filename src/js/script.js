@@ -24,10 +24,16 @@ thresholdSlider.addEventListener("input", () => {
 
 document.addEventListener("DOMContentLoaded", () => {
   labelContainer = document.getElementById("label-container");
+
+  // Botão de iniciar/parar reconhecimento
   toggleButton.addEventListener("click", toggleRecognition);
+
+  // Botão de conectar ao Arduino
+  const connectButton = document.getElementById("connect-arduino");
+  connectButton.addEventListener("click", connectToArduino);
 });
 
-// TeachableMachine ou local
+// TeachableMachine
 async function createModel() {
   const base = USE_CUSTOM_MODEL ? CUSTOM_MODEL_URL : MODEL_URL;
   const checkpointURL = base + "model.json";

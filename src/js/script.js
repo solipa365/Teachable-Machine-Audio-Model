@@ -1,5 +1,5 @@
 const MODEL_URL = "https://teachablemachine.withgoogle.com/models/Lx84jfhmy/";
-const USE_CUSTOM_MODEL = true;
+
 
 let recognizer = null;
 let labelContainer = null;
@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // TeachableMachine
 async function createModel() {
-  const base = USE_CUSTOM_MODEL ? CUSTOM_MODEL_URL : MODEL_URL;
+  const base = MODEL_URL;
   const checkpointURL = base + "model.json";
   const metadataURL = base + "metadata.json";
 
@@ -53,46 +53,57 @@ async function createModel() {
 async function toggleRecognition() {
   if (!isListening) {
     try {
-      sharedStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      sharedStream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          sampleRate: 44100,
+        },
+      });
+
       if (!recognizer) recognizer = await createModel();
 
       const classLabels = recognizer.wordLabels();
       setupLabelDisplay(classLabels);
 
-      recognizer.listen(async (result) => {
-        const scores = result.scores;
-        let maxIndex = 0;
-        for (let i = 1; i < scores.length; i++) {
-          if (scores[i] > scores[maxIndex]) maxIndex = i;
+      recognizer.listen(
+        async (result) => {
+          const scores = result.scores;
+          let maxIndex = 0;
+          for (let i = 1; i < scores.length; i++) {
+            if (scores[i] > scores[maxIndex]) maxIndex = i;
+          }
+
+          const predictedLabel = classLabels[maxIndex];
+          const confidence = scores[maxIndex];
+
+          recognizedDisplay.innerHTML = `Comando reconhecido: <strong>${predictedLabel}</strong>`;
+
+          scores.forEach((score, i) => {
+            labelContainer.childNodes[i].innerHTML = `${
+              classLabels[i]
+            }: ${score.toFixed(2)}`;
+          });
+
+          if (confidence >= 0.8 && writer) {
+            await writer.write(new TextEncoder().encode(predictedLabel + "\n"));
+            console.log("Enviado ao Arduino:", predictedLabel);
+          }
+        },
+        {
+          includeSpectrogram: true,
+          probabilityThreshold: parseFloat(thresholdSlider.value),
+          invokeCallbackOnNoiseAndUnknown: true,
+          overlapFactor: 0.5,
         }
-
-        const predictedLabel = classLabels[maxIndex];
-        const confidence = scores[maxIndex];
-
-        recognizedDisplay.innerHTML = `Comando reconhecido: <strong>${predictedLabel}</strong>`;
-
-        scores.forEach((score, i) => {
-          labelContainer.childNodes[i].innerHTML = `${classLabels[i]}: ${score.toFixed(2)}`;
-        });
-
-        if (confidence >= 0.8 && writer) {
-          await writer.write(new TextEncoder().encode(predictedLabel + "\n"));
-          console.log("Enviado ao Arduino:", predictedLabel);
-        }
-
-      }, {
-        includeSpectrogram: true,
-        probabilityThreshold: parseFloat(thresholdSlider.value),
-        invokeCallbackOnNoiseAndUnknown: true,
-        overlapFactor: 0.5,
-      });
+      );
 
       startAudioVisualizer(sharedStream);
 
       isListening = true;
       toggleButton.textContent = "Parar";
     } catch (err) {
-      alert("Erro ao aceder ao microfone.");
+      alert("Erro ao aceder ao microfone: " + err.message);
     }
   } else {
     await recognizer.stopListening();
@@ -104,9 +115,11 @@ async function toggleRecognition() {
     isListening = false;
     toggleButton.textContent = "Iniciar";
     labelContainer.innerHTML = "";
-    recognizedDisplay.innerHTML = "Comando reconhecido: <strong>Nenhum</strong>";
+    recognizedDisplay.innerHTML =
+      "Comando reconhecido: <strong>Nenhum</strong>";
   }
 }
+
 
 function setupLabelDisplay(labels) {
   labelContainer.innerHTML = "";

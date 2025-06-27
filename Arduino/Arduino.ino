@@ -8,6 +8,7 @@ Servo servo_6;
 Servo servo_9;
 Servo servo_10;
 
+// Código para abir mão
 void abrirMao() {
   servo_3.write(0);
   servo_5.write(0);
@@ -16,22 +17,25 @@ void abrirMao() {
   servo_10.write(0);
 }
 
+// Código para fechar mão
 void fecharMao() {
-  servo_3.write(185);
-  servo_5.write(210);
+  servo_3.write(180);
+  servo_5.write(180);
   servo_6.write(180);
-  servo_9.write(210);
-  servo_10.write(190);
+  servo_9.write(180);
+  servo_10.write(180);
 }
 
+// Código para cool mão
 void modoCool() {
-  servo_3.write(0);
-  servo_5.write(0);
-  servo_6.write(0);
-  servo_9.write(0);
-  servo_10.write(190);
+  servo_3.write(200);
+  servo_5.write(200);
+  servo_6.write(250);
+  servo_9.write(200);
+  servo_10.write(0); 
 }
 
+// Código do estado inicial é objetos Servo
 void setup() {
   Serial.begin(9600); // Comunicação com o browser ou Serial Monitor
 
@@ -46,8 +50,6 @@ void setup() {
 
 void loop() {
   if (Serial.available()) {
-    Serial.println("A receber...");
-
     String comando = Serial.readStringUntil('\n');
     comando.trim();        // Remove espaços ou quebras de linha
     comando.toLowerCase(); // Converte para minúsculas
